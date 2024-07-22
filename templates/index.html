@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חיזוי מחיר רכב</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            direction: rtl;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            margin: 20px;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+        .container h2 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        #predictedPrice {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
+    <script>
+        function validateStringInput(event) {
+            const input = event.target;
+            const value = input.value;
+            const valid = /^[a-zA-Zא-ת\s]*$/.test(value);
+            if (!valid) {
+                alert('הזן תווים אלפבתיים בלבד.');
+                input.value = value.replace(/[^a-zA-Zא-ת\s]/g, '');
+            }
+        }
+        function validateAlphaNumericInput(event) {
+            const input = event.target;
+            const value = input.value;
+            const valid = /^[a-zA-Z0-9א-ת\s]*$/.test(value);
+            if (!valid) {
+                alert('הזן תווים אלפבתיים ומספרים בלבד.');
+                input.value = value.replace(/[^a-zA-Z0-9א-ת\s]/g, '');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>חיזוי מחיר רכב</h2>
+        <form id="predictionForm">
+            <div class="form-group">
+                <label for="manufactor">יצרן:</label>
+                <select id="manufactor" name="manufactor" required>
+                    <option value="">בחר יצרן</option>
+                    <option value="אבארט">אבארט</option>
+                    <option value="אאודי">אאודי</option>
+                    <option value="אופל">אופל</option>
+                    <option value="אינפיניטי">אינפיניטי</option>
+                    <option value="איסוזו">איסוזו</option>
+                    <option value="אלפא רומיאו">אלפא רומיאו</option>
+                    <option value="אסיה">אסיה</option>
+                    <option value="ב.מ.וו">ב.מ.וו</option>
+                    <option value="ביואיק">ביואיק</option>
+                    <option value="בנטלי">בנטלי</option>
+                    <option value="דאצ'יה">דאצ'יה</option>
+                    <option value="דודג'">דודג'</option>
+                    <option value="הונדה">הונדה</option>
+                    <option value="וולוו">וולוו</option>
+                    <option value="טויוטה">טויוטה</option>
+                    <option value="יגואר">יגואר</option>
+                    <option value="יונדאי">יונדאי</option>
+                    <option value="לנצ'יה">לנצ'יה</option>
+                    <option value="לנד רובר">לנד רובר</option>
+                    <option value="מאזדה">מאזדה</option>
+                    <option value="מזראטי">מזראטי</option>
+                    <option value="מיני">מיני</option>
+                    <option value="מיצובישי">מיצובישי</option>
+                    <option value="מרצדס">מרצדס</option>
+                    <option value="ניסאן">ניסאן</option>
+                    <option value="סובארו">סובארו</option>
+                    <option value="סוזוקי">סוזוקי</option>
+                    <option value="סיאט">סיאט</option>
+                    <option value="סיטרואן">סיטרואן</option>
+                    <option value="סמארט">סמארט</option>
+                    <option value="סקודה">סקודה</option>
+                    <option value="פולקסווגן">פולקסווגן</option>
+                    <option value="פונטיאק">פונטיאק</option>
+                    <option value="פיאט">פיאט</option>
+                    <option value="פיג'ו">פיג'ו</option>
+                    <option value="פורד">פורד</option>
+                    <option value="פורשה">פורשה</option>
+                    <option value="קאדילאק">קאדילאק</option>
+                    <option value="קיה">קיה</option>
+                    <option value="רנו">רנו</option>
+                    <option value="שברולט">שברולט</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="model">דגם:</label>
+                <input type="text" id="model" name="model" oninput="validateAlphaNumericInput(event)" required>
+            </div>
+            <div class="form-group">
+                <label for="Area">אזור:</label>
+                <input type="text" id="Area" name="Area" oninput="validateStringInput(event)" required>
+            </div>
+            <div class="form-group">
+                <label for="Year">שנה:</label>
+                <select id="Year" name="Year" required>
+                    <option value="">בחר שנה</option>
+                    <script>
+                        for (let year = 1980; year <= new Date().getFullYear(); year++) {
+                            document.write('<option value="' + year + '">' + year + '</option>');
+                        }
+                    </script>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Hand">יד:</label>
+                <select id="Hand" name="Hand" required>
+                    <option value="">בחר מספר ידיים</option>
+                    <script>
+                        for (let hand = 1; hand <= 10; hand++) {
+                            document.write('<option value="' + hand + '">' + hand + '</option>');
+                        }
+                    </script>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Gear">תיבת הילוכים:</label>
+                <select id="Gear" name="Gear" required>
+                    <option value="">בחר תיבת הילוכים</option>
+                    <option value="אוטומטית">אוטומטית</option>
+                    <option value="ידנית">ידנית</option>
+                    <option value="רובוטית">רובוטית</option>
+                    <option value="טיפטרוניק">טיפטרוניק</option>
+                    <option value="אחר">אחר</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="capacity_Engine">נפח מנוע:</label>
+                <input type="number" id="capacity_Engine" name="capacity_Engine" min="800" max="6000" required>
+            </div>
+            <div class="form-group">
+                <label for="Engine_type">סוג מנוע:</label>
+                <select id="Engine_type" name="Engine_type" required>
+                    <option value="">בחר סוג מנוע</option>
+                    <option value="בנזין">בנזין</option>
+                    <option value="דיזל">דיזל</option>
+                    <option value="היבריד">היבריד</option>
+                    <option value="חשמלי">חשמלי</option>
+                    <option value="גז">גז</option>
+                    <option value="אחר">אחר</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Prev_ownership">בעלות קודמת:</label>
+                <select id="Prev_ownership" name="Prev_ownership" required>
+                    <option value="">בחר בעלות קודמת</option>
+                    <option value="פרטית">פרטית</option>
+                    <option value="ליסינג פרטי">ליסינג פרטי</option>
+                    <option value="ליסינג תפעולי">ליסינג תפעולי</option>
+                    <option value="חברת השכרה">חברת השכרה</option>
+                    <option value="חברת השכרה / ליסינג">חברת השכרה / ליסינג</option>
+                    <option value="ייבוא אישי">ייבוא אישי</option>
+                    <option value="מונית">מונית</option>
+                    <option value="הסבה">הסבה</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Curr_ownership">בעלות נוכחית:</label>
+                <select id="Curr_ownership" name="Curr_ownership" required>
+                    <option value="">בחר בעלות נוכחית</option>
+                    <option value="פרטית">פרטית</option>
+                    <option value="ליסינג פרטי">ליסינג פרטי</option>
+                    <option value="ליסינג תפעולי">ליסינג תפעולי</option>
+                    <option value="חברת השכרה">חברת השכרה</option>
+                    <option value="חברת השכרה / ליסינג">חברת השכרה / ליסינג</option>
+                    <option value="ייבוא אישי">ייבוא אישי</option>
+                    <option value="מונית">מונית</option>
+                    <option value="הסבה">הסבה</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="City">עיר:</label>
+                <input type="text" id="City" name="City" oninput="validateStringInput(event)" required>
+            </div>
+            <div class="form-group">
+                <label for="Color">צבע:</label>
+                <input type="text" id="Color" name="Color" oninput="validateStringInput(event)" required>
+            </div>
+            <div class="form-group">
+                <label for="Km">קילומטראז':</label>
+                <input type="number" id="Km" name="Km" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="Description">תיאור:</label>
+                <textarea id="Description" name="Description" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="Test">תאריך מבחן:</label>
+                <input type="date" id="Test" name="Test" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">נבא מחיר</button>
+            </div>
+        </form>
+        <div id="predictedPrice" style="margin-top: 20px; font-size: 20px;"></div>
+    </div>
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent the default form submission
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => { data[key] = value; });
+            
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('predictedPrice').textContent = 'מחיר חזוי: ' + data.predicted_price;
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+                alert('Error: ' + error);
+            });
+        });
+    </script>
+</body>
+</html>
+
